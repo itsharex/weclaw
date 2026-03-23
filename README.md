@@ -110,15 +110,13 @@ Config file: `~/.weclaw/config.json`
   "default_agent": "claude",
   "agents": {
     "claude": {
-      "type": "cli",
-      "command": "/usr/local/bin/claude",
-      "model": "sonnet",
-      "args": ["--dangerously-skip-permissions"]
+      "type": "acp",
+      "command": "/usr/local/bin/claude-agent-acp",
+      "model": "sonnet"
     },
     "codex": {
-      "type": "cli",
-      "command": "/usr/local/bin/codex",
-      "args": ["--skip-git-repo-check"]
+      "type": "acp",
+      "command": "/usr/local/bin/codex-acp"
     },
     "openclaw": {
       "type": "http",
@@ -134,6 +132,34 @@ Environment variables:
 - `WECLAW_DEFAULT_AGENT` — override default agent
 - `OPENCLAW_GATEWAY_URL` — OpenClaw HTTP fallback endpoint
 - `OPENCLAW_GATEWAY_TOKEN` — OpenClaw API token
+
+### Permission bypass
+
+By default, some agents require interactive permission approval which doesn't work in WeChat. Add `args` to your agent config to bypass:
+
+| Agent | Flag | What it does |
+|-------|------|-------------|
+| Claude (CLI) | `--dangerously-skip-permissions` | Skip all tool permission prompts |
+| Codex (CLI) | `--skip-git-repo-check` | Allow running outside git repos |
+
+Example:
+
+```json
+{
+  "claude": {
+    "type": "cli",
+    "command": "/usr/local/bin/claude",
+    "args": ["--dangerously-skip-permissions"]
+  },
+  "codex": {
+    "type": "cli",
+    "command": "/usr/local/bin/codex",
+    "args": ["--skip-git-repo-check"]
+  }
+}
+```
+
+> **Warning:** These flags disable safety checks. Only enable them if you understand the risks. ACP agents handle permissions automatically and don't need these flags.
 
 ## Background Mode
 

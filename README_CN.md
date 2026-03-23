@@ -111,15 +111,13 @@ curl -X POST http://127.0.0.1:18011/api/send \
   "default_agent": "claude",
   "agents": {
     "claude": {
-      "type": "cli",
-      "command": "/usr/local/bin/claude",
-      "model": "sonnet",
-      "args": ["--dangerously-skip-permissions"]
+      "type": "acp",
+      "command": "/usr/local/bin/claude-agent-acp",
+      "model": "sonnet"
     },
     "codex": {
-      "type": "cli",
-      "command": "/usr/local/bin/codex",
-      "args": ["--skip-git-repo-check"]
+      "type": "acp",
+      "command": "/usr/local/bin/codex-acp"
     },
     "openclaw": {
       "type": "http",
@@ -136,6 +134,34 @@ curl -X POST http://127.0.0.1:18011/api/send \
 - `WECLAW_DEFAULT_AGENT` — 覆盖默认 Agent
 - `OPENCLAW_GATEWAY_URL` — OpenClaw HTTP 回退地址
 - `OPENCLAW_GATEWAY_TOKEN` — OpenClaw API Token
+
+### 权限配置
+
+部分 Agent 默认需要交互式权限确认，在微信场景下无法操作会导致卡住。可通过 `args` 配置跳过：
+
+| Agent | 参数 | 说明 |
+|-------|------|------|
+| Claude (CLI) | `--dangerously-skip-permissions` | 跳过所有工具权限确认 |
+| Codex (CLI) | `--skip-git-repo-check` | 允许在非 git 仓库目录运行 |
+
+配置示例：
+
+```json
+{
+  "claude": {
+    "type": "cli",
+    "command": "/usr/local/bin/claude",
+    "args": ["--dangerously-skip-permissions"]
+  },
+  "codex": {
+    "type": "cli",
+    "command": "/usr/local/bin/codex",
+    "args": ["--skip-git-repo-check"]
+  }
+}
+```
+
+> **注意：** 这些参数会跳过安全检查，请了解风险后再启用。ACP 模式的 Agent 会自动处理权限，无需配置。
 
 ## 后台运行
 
